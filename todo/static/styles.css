@@ -1,0 +1,77 @@
+:root{
+  --bg: #f4f6f9;
+  --card: #ffffff;
+  --text: #222;
+  --muted: #666;
+  --primary: #4a90e2;
+  --danger: #e04b4b;
+  --chip: #eef6ff;
+}
+
+:root.dark{
+  --bg: #0f1720;
+  --card: #0b1220;
+  --text: #e6eef8;
+  --muted: #9fb0c6;
+  --primary: #5aa0ff;
+  --danger: #ff7a7a;
+  --chip: #12334a;
+}
+
+*{box-sizing:border-box}
+body{
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background: var(--bg);
+  color: var(--text);
+  margin:0;
+  padding:0 16px 40px;
+  -webkit-font-smoothing:antialiased;
+}
+
+.container{max-width:960px;margin:28px auto;padding:0 16px;}
+
+.topbar{background:transparent;padding:10px 0}
+.topbar .container{display:flex;align-items:center;justify-content:space-between}
+.topbar h1{margin:0;font-size:20px}
+
+.card{background:var(--card);padding:16px;border-radius:10px;box-shadow:0 6px 20px rgba(2,6,23,0.06);margin-bottom:16px}
+
+.add-section .add-form{display:grid;grid-template-columns:1fr;gap:8px}
+.add-section input[type="text"], .add-section input[type="datetime-local"], .add-section textarea, .add-section select{
+  width:100%;padding:10px;border-radius:8px;border:1px solid #ddd;background:transparent;color:var(--text);
+}
+.add-section textarea{min-height:70px;resize:vertical}
+.btn{background:var(--primary);color:#fff;padding:8px 12px;border-radius:8px;border:none;cursor:pointer}
+.btn.ghost{background:transparent;border:1px solid rgba(0,0,0,0.08);color:var(--text)}
+.btn.small{padding:6px 8px;font-size:13px}
+.btn.danger{background:var(--danger)}
+
+.filter-form{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.filter-form input, .filter-form select{padding:8px;border-radius:8px;border:1px solid #ddd}
+
+.tasks .task-list{list-style:none;padding:0;margin:0}
+.task-item{display:flex;justify-content:space-between;align-items:flex-start;padding:12px;border-radius:10px;margin-bottom:10px;background:#fff;border-left:4px solid var(--primary)}
+.task-item.done{opacity:0.7;text-decoration:line-through}
+.task-item .left{display:flex;gap:12px;align-items:flex-start}
+.checkbox{background:transparent;border:none;font-size:18px;cursor:pointer;padding:6px}
+.meta{min-width:0}
+.meta .title{font-weight:600}
+.meta .description{color:var(--muted);font-size:14px;margin-top:6px}
+.meta .small{font-size:13px;color:var(--muted);margin-top:8px}
+.chip{background:var(--chip);padding:3px 8px;border-radius:8px;margin-right:8px;font-size:12px}
+
+.actions{display:flex;gap:8px;align-items:center}
+.empty{text-align:center;color:var(--muted);padding:18px}
+
+/* Responsive */
+@media (min-width:700px){
+  .add-section .add-form{grid-template-columns:1fr 1fr}
+  .add-section .add-form .btn{grid-column:2/3;justify-self:end}
+}
+
+/* small screens */
+@media (max-width:480px){
+  .topbar h1{font-size:18px}
+  .task-item{flex-direction:column;align-items:stretch}
+  .actions{margin-top:10px}
+}
