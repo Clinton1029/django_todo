@@ -23,14 +23,17 @@
 
     <!-- Add Task Section -->
     <section class="add-section card">
+
+      <!-- 🔥 Updated form (as you requested) -->
       <form method="POST" class="add-form">
         {% csrf_token %}
-        {{ form.title|as_crispy_field }}
-        {{ form.description|as_crispy_field }}
-        {{ form.category|as_crispy_field }}
-        {{ form.due_date|as_crispy_field }}
+        {{ form.title }}
+        {{ form.description }}
+        {{ form.category }}
+        {{ form.due_date }}
         <button type="submit" class="btn">Add Task</button>
       </form>
+      <!-- End Updated Form -->
 
       <!-- Filter Form -->
       <form method="GET" class="filter-form">
@@ -108,7 +111,6 @@
       setTheme(current === 'dark' ? 'light' : 'dark');
     });
 
-    // Initialize theme
     const saved = localStorage.getItem('theme') || 'light';
     setTheme(saved);
   </script>
