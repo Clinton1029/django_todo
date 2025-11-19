@@ -3,33 +3,36 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>To-Do</title>
+  <title>My Todo App</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
 
   <link rel="stylesheet" href="{% static 'styles.css' %}">
 </head>
 <body>
+  <!-- Topbar -->
   <header class="topbar">
     <div class="container">
-      <h1>My To-Do List</h1>
+      <h1>📝 My Todo List</h1>
       <div class="controls">
-        <button id="theme-toggle" aria-label="toggle theme">🌙</button>
+        <button id="theme-toggle" class="btn small ghost" aria-label="toggle theme">🌙</button>
       </div>
     </div>
   </header>
 
   <main class="container">
-    <!-- Add task form -->
+
+    <!-- Add Task Section -->
     <section class="add-section card">
       <form method="POST" class="add-form">
         {% csrf_token %}
-        {{ form.title }}
-        {{ form.description }}
-        {{ form.category }}
-        {{ form.due_date }}
+        {{ form.title|as_crispy_field }}
+        {{ form.description|as_crispy_field }}
+        {{ form.category|as_crispy_field }}
+        {{ form.due_date|as_crispy_field }}
         <button type="submit" class="btn">Add Task</button>
       </form>
 
+      <!-- Filter Form -->
       <form method="GET" class="filter-form">
         <input name="q" placeholder="Search..." value="{{ q }}">
         <select name="category">
@@ -41,14 +44,15 @@
         <button class="btn ghost">Filter</button>
       </form>
 
-      <form method="POST" action="{% url 'add_category' %}" class="inline">
+      <!-- Add Category Inline Form -->
+      <form method="POST" action="{% url 'add_category' %}" class="add-category-form">
         {% csrf_token %}
         <input name="name" placeholder="New category">
         <button class="btn small">Add Category</button>
       </form>
     </section>
 
-    <!-- Tasks list -->
+    <!-- Tasks List -->
     <section class="tasks card">
       <ul class="task-list">
         {% for task in tasks %}
@@ -87,21 +91,24 @@
     </section>
   </main>
 
+  <!-- Dark Mode Toggle Script -->
   <script>
-    // Dark mode toggle (uses localStorage)
     const toggle = document.getElementById('theme-toggle');
     const root = document.documentElement;
+
     function setTheme(mode) {
-      if (mode === 'dark') root.classList.add('dark');
+      if(mode === 'dark') root.classList.add('dark');
       else root.classList.remove('dark');
       toggle.textContent = mode === 'dark' ? '☀' : '🌙';
       localStorage.setItem('theme', mode);
     }
+
     toggle.addEventListener('click', () => {
-      const current = localStorage.getItem('theme') || (document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+      const current = localStorage.getItem('theme') || (root.classList.contains('dark') ? 'dark' : 'light');
       setTheme(current === 'dark' ? 'light' : 'dark');
     });
-    // initialize
+
+    // Initialize theme
     const saved = localStorage.getItem('theme') || 'light';
     setTheme(saved);
   </script>
