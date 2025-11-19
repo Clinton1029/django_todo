@@ -34,7 +34,7 @@ def index(request):
         'q': q,
         'current_category': category,
     }
-    return render(request, 'todo/index.html', context)
+    return render(request, 'index.html', context)
 
 
 def delete_task(request, id):
@@ -53,7 +53,7 @@ def edit_task(request, id):
             return redirect('home')
     else:
         form = TaskForm(instance=task)
-    return render(request, 'todo/edit.html', {'form': form, 'task': task})
+    return render(request, 'edit.html', {'form': form, 'task': task})
 
 
 def toggle_complete(request, id):
