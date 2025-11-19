@@ -1,26 +1,124 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>To-Do App</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: #fff;
+            width: 400px;
+            margin-top: 50px;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 6px 25px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #444;
+        }
+
+        form {
+            display: flex;
+            gap: 10px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 10px;
+            font-size: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            outline: none;
+        }
+
+        input[type="text"]:focus {
+            border-color: #4a90e2;
+        }
+
+        button {
+            padding: 10px 15px;
+            background: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: #357ac8;
+        }
+
+        ul {
+            list-style: none;
+            margin-top: 25px;
+            padding: 0;
+        }
+
+        li {
+            background: #f8f9fb;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid #4a90e2;
+        }
+
+        .delete-btn {
+            text-decoration: none;
+            color: #e04b4b;
+            font-size: 18px;
+            margin-left: 10px;
+        }
+
+        .delete-btn:hover {
+            color: #c93c3c;
+        }
+
+        .empty {
+            text-align: center;
+            color: #777;
+            margin-top: 20px;
+        }
+    </style>
 </head>
+
 <body>
-    <h1>My To-Do List</h1>
+    <div class="container">
+        <h1>My To-Do List</h1>
 
-    <form method="POST">
-        {% csrf_token %}
-        <input type="text" name="title" placeholder="Add a task" required>
-        <button type="submit">Add</button>
-    </form>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="text" name="title" placeholder="Add a task" required>
+            <button type="submit">Add</button>
+        </form>
 
-    <ul>
-        {% for task in tasks %}
-            <li>
-                {{ task.title }}
-                <a href="{% url 'delete' task.id %}">❌</a>
-            </li>
-        {% empty %}
-            <p>No tasks yet!</p>
-        {% endfor %}
-    </ul>
+        <ul>
+            {% for task in tasks %}
+                <li>
+                    {{ task.title }}
+                    <a class="delete-btn" href="{% url 'delete' task.id %}">❌</a>
+                </li>
+            {% empty %}
+                <p class="empty">No tasks yet!</p>
+            {% endfor %}
+        </ul>
+    </div>
 </body>
 </html>
