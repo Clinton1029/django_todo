@@ -5,9 +5,9 @@
   <meta charset="utf-8">
   <title>My Todo App</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
-
   <link rel="stylesheet" href="{% static 'styles.css' %}">
 </head>
+
 <body>
   <!-- Topbar -->
   <header class="topbar">
@@ -19,29 +19,39 @@
     </div>
   </header>
 
+  <!-- 🎯 Landing Section -->
+  <section class="hero container">
+    <h2 class="hero-title">Organize Your Day with Ease</h2>
+    <p class="hero-desc">
+      Add tasks, set categories, manage due dates — stay productive with a clean and modern todo dashboard.
+    </p>
+  </section>
+
   <main class="container">
 
     <!-- Add Task Section -->
     <section class="add-section card">
 
-      <!-- 🔥 Updated form (as you requested) -->
+      <!-- Add Task Form -->
+      <h3 class="section-title">Add a New Task</h3>
       <form method="POST" class="add-form">
         {% csrf_token %}
         {{ form.title }}
         {{ form.description }}
         {{ form.category }}
         {{ form.due_date }}
-        <button type="submit" class="btn">Add Task</button>
+        <button type="submit" class="btn">➕ Add Task</button>
       </form>
-      <!-- End Updated Form -->
 
       <!-- Filter Form -->
       <form method="GET" class="filter-form">
-        <input name="q" placeholder="Search..." value="{{ q }}">
+        <input name="q" placeholder="Search tasks..." value="{{ q }}">
         <select name="category">
           <option value="">All categories</option>
           {% for cat in categories %}
-            <option value="{{ cat.id }}" {% if current_category|add:'' == cat.id|stringformat:"s" %}selected{% endif %}>{{ cat.name }}</option>
+            <option value="{{ cat.id }}" {% if current_category|add:'' == cat.id|stringformat:"s" %}selected{% endif %}>
+              {{ cat.name }}
+            </option>
           {% endfor %}
         </select>
         <button class="btn ghost">Filter</button>
@@ -50,57 +60,65 @@
       <!-- Add Category Inline Form -->
       <form method="POST" action="{% url 'add_category' %}" class="add-category-form">
         {% csrf_token %}
-        <input name="name" placeholder="New category">
-        <button class="btn small">Add Category</button>
+        <input name="name" placeholder="Create new category...">
+        <button class="btn small">Add</button>
       </form>
     </section>
 
     <!-- Tasks List -->
     <section class="tasks card">
+      <h3 class="section-title">Your Tasks</h3>
       <ul class="task-list">
         {% for task in tasks %}
           <li class="task-item {% if task.completed %}done{% endif %}">
             <div class="left">
               <form method="POST" action="{% url 'toggle' task.id %}">
                 {% csrf_token %}
-                <button class="checkbox" title="toggle complete" aria-label="toggle complete">
+                <button class="checkbox" aria-label="toggle complete">
                   {% if task.completed %}✔{% else %}○{% endif %}
                 </button>
               </form>
+
               <div class="meta">
                 <div class="title">{{ task.title }}</div>
+
                 {% if task.description %}
                   <div class="description">{{ task.description|linebreaksbr }}</div>
                 {% endif %}
+
                 <div class="small">
-                  {% if task.category %}<span class="chip">{{ task.category.name }}</span>{% endif %}
-                  {% if task.due_date %}<span>Due: {{ task.due_date|date:"M j, Y H:i" }}</span>{% endif %}
+                  {% if task.category %}
+                    <span class="chip">{{ task.category.name }}</span>
+                  {% endif %}
+                  {% if task.due_date %}
+                    <span>🕒 {{ task.due_date|date:"M j, Y H:i" }}</span>
+                  {% endif %}
                 </div>
               </div>
             </div>
 
             <div class="actions">
               <a class="btn ghost" href="{% url 'edit' task.id %}">Edit</a>
-              <form method="POST" action="{% url 'delete' task.id %}" style="display:inline;">
+              <form method="POST" action="{% url 'delete' task.id %}">
                 {% csrf_token %}
-                <button class="btn danger" title="Delete">Delete</button>
+                <button class="btn danger">Delete</button>
               </form>
             </div>
           </li>
         {% empty %}
-          <p class="empty">No tasks yet — add your first task above!</p>
+          <p class="empty">✨ No tasks yet — Add your first one above!</p>
         {% endfor %}
       </ul>
     </section>
   </main>
 
-  <!-- Dark Mode Toggle Script -->
+  <!-- Theme Toggle Script -->
   <script>
     const toggle = document.getElementById('theme-toggle');
     const root = document.documentElement;
 
     function setTheme(mode) {
-      if(mode === 'dark') root.classList.add('dark');
+      if (mode === 'dark') root.classList.add('dark');
       else root.classList.remove('dark');
       toggle.textContent = mode === 'dark' ? '☀' : '🌙';
       localStorage.setItem('theme', mode);
@@ -114,5 +132,6 @@
     const saved = localStorage.getItem('theme') || 'light';
     setTheme(saved);
   </script>
+
 </body>
 </html>
