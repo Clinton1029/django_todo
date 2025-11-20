@@ -11,12 +11,19 @@
   <main class="container">
     <div class="card">
       <h2>Edit Task</h2>
+
       <form method="POST">
         {% csrf_token %}
-        {{ form.as_p }}
+
+        {{ form.title }}
+        {{ form.description }}
+        {{ form.category }}
+        {{ form.due_date }}
+
         <button class="btn">Save</button>
         <a href="{% url 'home' %}" class="btn ghost">Cancel</a>
       </form>
+
     </div>
   </main>
 </body>
