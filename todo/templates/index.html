@@ -9,11 +9,11 @@
 </head>
 
 <body>
-
   <!-- Topbar -->
   <header class="topbar glass">
-    <div class="container">
-      <h1 class="logo">📝 Todo Dashboard</h1>
+    <div class="container top-flex">
+      <h1 class="logo">📝 My Todo</h1>
+
       <div class="controls">
         <button id="theme-toggle" class="btn small ghost" aria-label="toggle theme">🌙</button>
       </div>
@@ -21,10 +21,10 @@
   </header>
 
   <!-- Hero Section -->
-  <section class="hero container glass">
-    <h2 class="hero-title">Stay Organized. Stay Focused.</h2>
+  <section class="hero container">
+    <h2 class="hero-title">Stay Organized. Stay Ahead.</h2>
     <p class="hero-desc">
-      A clean and modern task manager to help you track your goals, deadlines, and daily routines.
+      Quickly add tasks, track progress, manage deadlines — everything you need in one place.
     </p>
   </section>
 
@@ -32,98 +32,110 @@
 
     <!-- Add Task Section -->
     <section class="add-section card elevated">
-      <h3 class="section-title">➕ Create a New Task</h3>
+
+      <h3 class="section-title">Create a Task</h3>
 
       <form method="POST" class="add-form grid-form">
         {% csrf_token %}
+        
         <div class="form-grid">
-          {{ form.title }}
-          {{ form.description }}
+          <!-- Title field with placeholder -->
+          {{ form.title.as_widget(attrs={"placeholder": "Task title (e.g., Complete Django project)"}) }}
+
+          <!-- Description field with placeholder -->
+          {{ form.description.as_widget(attrs={
+              "placeholder": "Brief description (optional)",
+              "rows": 3
+          }) }}
+
           {{ form.category }}
           {{ form.due_date }}
         </div>
-        <button type="submit" class="btn wide">Add Task</button>
+
+        <button type="submit" class="btn wide">➕ Add Task</button>
       </form>
 
-      <!-- Filters -->
-      <form method="GET" class="filter-form glass">
-        <input name="q" placeholder="🔍 Search tasks..." value="{{ q }}">
-        
-        <select name="category">
-          <option value="">📁 All categories</option>
-          {% for cat in categories %}
-            <option value="{{ cat.id }}"
-              {% if current_category|add:'' == cat.id|stringformat:"s" %}selected{% endif %}
-            >
-              {{ cat.name }}
-            </option>
-          {% endfor %}
-        </select>
-
-        <button class="btn ghost">Apply</button>
+      <!-- Filter Tasks -->
+      <form method="GET" class="filter-form">
+        <div class="form-grid">
+          <input name="q" placeholder="Search tasks..." value="{{ q }}">
+          <select name="category">
+            <option value="">All categories</option>
+            {% for cat in categories %}
+              <option value="{{ cat.id }}" 
+                {% if current_category|add:'' == cat.id|stringformat:"s" %}selected{% endif %}>
+                {{ cat.name }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+        <button class="btn ghost small">Filter</button>
       </form>
 
       <!-- Add Category -->
       <form method="POST" action="{% url 'add_category' %}" class="add-category-form">
         {% csrf_token %}
-        <input name="name" placeholder="➕ New category name...">
+        <div class="form-grid">
+          <input name="name" placeholder="Create new category...">
+        </div>
         <button class="btn small">Add</button>
       </form>
+
     </section>
 
-    <!-- Tasks List -->
+    <!-- Tasks Section -->
     <section class="tasks card elevated">
-      <h3 class="section-title">📋 Your Tasks</h3>
+      <h3 class="section-title">Your Tasks</h3>
 
-      <ul class="task-list modern-list">
+      <ul class="task-list">
         {% for task in tasks %}
-          <li class="task-item modern-task {% if task.completed %}done{% endif %}">
-            
-            <div class="left">
-              <form method="POST" action="{% url 'toggle' task.id %}">
-                {% csrf_token %}
-                <button class="checkbox modern-check" title="Toggle task">
-                  {% if task.completed %}✔{% else %}○{% endif %}
-                </button>
-              </form>
+        <li class="modern-task {% if task.completed %}done{% endif %}">
+          
+          <div class="left">
+            <!-- Toggle completion -->
+            <form method="POST" action="{% url 'toggle' task.id %}">
+              {% csrf_token %}
+              <button class="checkbox" aria-label="toggle complete">
+                {% if task.completed %}✔{% else %}○{% endif %}
+              </button>
+            </form>
 
-              <div class="meta">
-                <div class="title">{{ task.title }}</div>
+            <div class="meta">
+              <div class="title">{{ task.title }}</div>
 
-                {% if task.description %}
-                <div class="description">{{ task.description|linebreaksbr }}</div>
+              {% if task.description %}
+              <div class="description">{{ task.description|linebreaksbr }}</div>
+              {% endif %}
+
+              <div class="small">
+                {% if task.category %}
+                <span class="chip">{{ task.category.name }}</span>
                 {% endif %}
 
-                <div class="small">
-                  {% if task.category %}
-                    <span class="chip">{{ task.category.name }}</span>
-                  {% endif %}
-
-                  {% if task.due_date %}
-                    <span class="due">⏳ {{ task.due_date|date:"M j, Y H:i" }}</span>
-                  {% endif %}
-                </div>
+                {% if task.due_date %}
+                <span class="due">🕒 {{ task.due_date|date:"M j, Y H:i" }}</span>
+                {% endif %}
               </div>
             </div>
+          </div>
 
-            <div class="actions">
-              <a class="btn ghost small" href="{% url 'edit' task.id %}">✏ Edit</a>
+          <!-- Actions -->
+          <div class="actions">
+            <a class="btn ghost small" href="{% url 'edit' task.id %}">Edit</a>
+            <form method="POST" action="{% url 'delete' task.id %}">
+              {% csrf_token %}
+              <button class="btn danger small">Delete</button>
+            </form>
+          </div>
 
-              <form method="POST" action="{% url 'delete' task.id %}">
-                {% csrf_token %}
-                <button class="btn danger small">🗑 Delete</button>
-              </form>
-            </div>
-          </li>
+        </li>
         {% empty %}
-          <p class="empty">✨ No tasks yet — create one above!</p>
+        <p class="empty">✨ No tasks yet — Start by adding one above!</p>
         {% endfor %}
       </ul>
-
     </section>
 
   </main>
-
 
   <!-- Theme Toggle Script -->
   <script>
@@ -131,18 +143,15 @@
     const root = document.documentElement;
 
     function setTheme(mode) {
-      mode === 'dark'
-        ? root.classList.add('dark')
-        : root.classList.remove('dark');
-
+      if (mode === 'dark') root.classList.add('dark');
+      else root.classList.remove('dark');
       toggle.textContent = mode === 'dark' ? '☀' : '🌙';
       localStorage.setItem('theme', mode);
     }
 
     toggle.addEventListener('click', () => {
       const current = localStorage.getItem('theme') || 
-                      (root.classList.contains('dark') ? 'dark' : 'light');
-
+        (root.classList.contains('dark') ? 'dark' : 'light');
       setTheme(current === 'dark' ? 'light' : 'dark');
     });
 
