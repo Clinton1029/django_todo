@@ -6,34 +6,39 @@
   <title>📝 My Todo App</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="{% static 'styles.css' %}">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js" integrity="sha512-..." crossorigin="anonymous"></script>
 </head>
 <body>
-
-  <!-- Modern Navbar -->
+  <!-- Topbar / Navbar -->
   <header class="topbar">
     <div class="container topbar-content">
-      <h1 class="logo">📝 Todo SaaS</h1>
-      <nav class="nav-right">
-        <a href="{% url 'login' %}" class="btn small ghost">Login</a>
-        <a href="{% url 'register' %}" class="btn small">Register</a>
-        <button id="theme-toggle" class="btn small ghost">🌙</button>
+      <h1 class="logo">📝 My Todo App</h1>
+
+      <nav class="nav">
+        {% if user.is_authenticated %}
+          <span>Hi, {{ user.username|title }}</span>
+          <a href="{% url 'logout' %}">Logout</a>
+        {% else %}
+          <a href="{% url 'login' %}">Login</a>
+          <a href="{% url 'signup' %}">Register</a>
+        {% endif %}
       </nav>
+
+      <button id="theme-toggle" class="btn small ghost">🌙</button>
     </div>
   </header>
 
   <!-- Hero Section -->
-  <section class="hero container compact">
+  <section class="hero container">
     <h2 class="hero-title">Organize Your Day</h2>
-    <p class="hero-desc">Manage tasks, categories, and deadlines efficiently with a modern interface.</p>
+    <p class="hero-desc">Manage tasks, categories, and deadlines with style.</p>
   </section>
 
-  <main class="container main compact">
-
+  <main class="container main">
     <!-- Add & Filter Section -->
-    <section class="card add-section elevated compact">
+    <section class="card add-section elevated">
       <h3 class="section-title">Add Task</h3>
-      <form method="POST" class="add-form compact">
+      <form method="POST" class="add-form">
         {% csrf_token %}
         {{ form.title }}
         {{ form.description }}
@@ -42,12 +47,12 @@
         <button type="submit" class="btn wide">➕ Add Task</button>
       </form>
 
-      <div class="flex-between compact">
-        <!-- Live Search -->
+      <div class="flex-between">
+        <!-- Filter -->
         <input type="text" id="live-search" placeholder="Search tasks..." class="wide">
 
         <!-- Add Category -->
-        <form method="POST" action="{% url 'add_category' %}" class="add-category-form compact">
+        <form method="POST" action="{% url 'add_category' %}" class="add-category-form">
           {% csrf_token %}
           <input name="name" placeholder="New category...">
           <button class="btn small">Add</button>
@@ -56,7 +61,7 @@
     </section>
 
     <!-- Tasks List -->
-    <section class="card tasks elevated compact">
+    <section class="card tasks elevated">
       <h3 class="section-title">Your Tasks</h3>
       <ul class="task-list" id="tasks">
         {% for task in tasks %}
@@ -66,6 +71,7 @@
               {% csrf_token %}
               <button class="checkbox">{% if task.completed %}✔{% else %}○{% endif %}</button>
             </form>
+
             <div class="task-text">
               <div class="title">{{ task.title }}</div>
               {% if task.description %}
@@ -93,7 +99,7 @@
 
       <!-- Pagination -->
       {% if is_paginated %}
-      <div class="pagination compact">
+      <div class="pagination">
         {% if page_obj.has_previous %}
           <a href="?page={{ page_obj.previous_page_number }}{% if q %}&q={{ q }}{% endif %}" class="btn small ghost">⬅ Prev</a>
         {% endif %}
@@ -110,26 +116,25 @@
       </div>
       {% endif %}
     </section>
-
   </main>
 
   <!-- Scripts -->
   <script>
-    // Theme Toggle
     const toggle = document.getElementById("theme-toggle");
     const root = document.documentElement;
+
     function setTheme(mode){
       root.classList.toggle("dark", mode==="dark");
       toggle.textContent = mode==="dark"?"☀":"🌙";
       localStorage.setItem("theme", mode);
     }
+
     toggle.addEventListener("click", ()=>{
       const current = localStorage.getItem("theme") || (root.classList.contains("dark")?"dark":"light");
       setTheme(current==="dark"?"light":"dark");
     });
     setTheme(localStorage.getItem("theme")||"light");
 
-    // Live Search
     const search = document.getElementById("live-search");
     search.addEventListener("input", e=>{
       const query = e.target.value.toLowerCase();
@@ -138,13 +143,11 @@
       });
     });
 
-    // Drag & Drop
     new Sortable(document.getElementById("tasks"), {
       animation: 150,
       ghostClass: 'dragging',
       handle: '.title',
     });
   </script>
-
 </body>
 </html>
