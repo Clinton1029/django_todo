@@ -21,23 +21,22 @@
 
   <!-- Hero Section -->
   <section class="hero container">
-    <h2>Organize Your Day</h2>
-    <p>Manage tasks, categories, and deadlines in a clean and modern dashboard.</p>
+    <h2 class="hero-title">Organize Your Day</h2>
+    <p class="hero-desc">Manage tasks, categories, and deadlines in a clean and modern dashboard.</p>
   </section>
 
   <main class="container main">
 
     <!-- Add & Filter Section -->
     <section class="card add-section">
-
-      <h3>Add Task</h3>
+      <h3 class="section-title">Add Task</h3>
       <form method="POST" class="add-form">
         {% csrf_token %}
         {{ form.title }}
         {{ form.description }}
         {{ form.category }}
         {{ form.due_date }}
-        <button type="submit" class="btn full">➕ Add Task</button>
+        <button type="submit" class="btn wide">➕ Add Task</button>
       </form>
 
       <!-- Filter -->
@@ -61,33 +60,30 @@
         <input name="name" placeholder="New category...">
         <button class="btn small">Add</button>
       </form>
-
     </section>
 
-    <!-- Tasks List -->
+    <!-- Modern Tasks List -->
     <section class="card tasks">
-      <h3>Your Tasks</h3>
+      <h3 class="section-title">Your Tasks</h3>
 
       <ul class="task-list">
-
         {% for task in tasks %}
-          <li class="task-item {% if task.completed %}done{% endif %}">
+          <li class="modern-task {% if task.completed %}done{% endif %}">
 
-            <div class="task-left">
+            <div class="left">
+              <!-- Complete Toggle -->
               <form method="POST" action="{% url 'toggle' task.id %}">
                 {% csrf_token %}
-                <button class="checkbox">
-                  {% if task.completed %}✔{% else %}○{% endif %}
-                </button>
+                <button class="checkbox">{% if task.completed %}✔{% else %}○{% endif %}</button>
               </form>
 
-              <div class="task-meta">
-                <div class="task-title">{{ task.title }}</div>
+              <!-- Task Info -->
+              <div class="task-text">
+                <div class="title">{{ task.title }}</div>
                 {% if task.description %}
-                  <div class="task-desc">{{ task.description|linebreaksbr }}</div>
+                  <div class="description">{{ task.description|linebreaksbr }}</div>
                 {% endif %}
-
-                <div class="task-info">
+                <div class="small">
                   {% if task.category %}
                     <span class="chip">{{ task.category.name }}</span>
                   {% endif %}
@@ -98,16 +94,16 @@
               </div>
             </div>
 
+            <!-- Task Actions -->
             <div class="task-actions">
-              <a href="{% url 'edit' task.id %}" class="btn ghost small">Edit</a>
+              <a href="{% url 'edit' task.id %}" class="btn ghost small">✏ Edit</a>
               <form method="POST" action="{% url 'delete' task.id %}">
                 {% csrf_token %}
-                <button class="btn danger small">Delete</button>
+                <button class="btn danger small">🗑 Delete</button>
               </form>
             </div>
 
           </li>
-
         {% empty %}
           <p class="empty">✨ No tasks yet — Add one above!</p>
         {% endfor %}
