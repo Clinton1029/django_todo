@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import User  # import User
 
 class Category(models.Model):
     name = models.CharField(max_length=50, unique=True)
@@ -10,10 +11,18 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+
 class Task(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tasks')  # link tasks to users
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
-    category = models.ForeignKey(Category, null=True, blank=True, on_delete=models.SET_NULL, related_name='tasks')
+    category = models.ForeignKey(
+        Category,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='tasks'
+    )
     completed = models.BooleanField(default=False)
     due_date = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
