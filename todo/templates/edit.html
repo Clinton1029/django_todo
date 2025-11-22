@@ -1,30 +1,78 @@
 {% load static %}
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
-  <meta charset="utf-8">
-  <title>Edit Task</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <meta charset="utf-8">
+    <title>Edit Task</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+
+    <!-- THEME SCRIPT -->
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const themeToggle = document.getElementById("themeToggle");
+        const savedTheme = localStorage.getItem("theme") || "light";
+
+        document.documentElement.setAttribute("data-theme", savedTheme);
+
+        if (savedTheme === "dark") themeToggle.checked = true;
+
+        themeToggle.addEventListener("change", function () {
+            if (this.checked) {
+                document.documentElement.setAttribute("data-theme", "dark");
+                localStorage.setItem("theme", "dark");
+            } else {
+                document.documentElement.setAttribute("data-theme", "light");
+                localStorage.setItem("theme", "light");
+            }
+        });
+    });
+    </script>
 </head>
+
 <body>
-  <main class="container">
-    <div class="card">
-      <h2>Edit Task</h2>
 
-      <form method="POST">
-        {% csrf_token %}
+    <!-- NAVBAR -->
+    <header class="navbar">
+        <h1 class="logo">Django Todo</h1>
 
-        {{ form.title }}
-        {{ form.description }}
-        {{ form.category }}
-        {{ form.due_date }}
+        <!-- Theme toggle -->
+        <label class="switch">
+            <input type="checkbox" id="themeToggle">
+            <span class="slider round"></span>
+        </label>
+    </header>
 
-        <button class="btn">Save</button>
-        <a href="{% url 'home' %}" class="btn ghost">Cancel</a>
-      </form>
+    <main class="container fade-in">
+        <div class="card modern-card">
+            <h2>Edit Task</h2>
 
-    </div>
-  </main>
+            <form method="POST" class="form">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    {{ form.title }}
+                </div>
+
+                <div class="form-group">
+                    {{ form.description }}
+                </div>
+
+                <div class="form-group">
+                    {{ form.category }}
+                </div>
+
+                <div class="form-group">
+                    {{ form.due_date }}
+                </div>
+
+                <div class="btn-row">
+                    <button class="btn primary">Save</button>
+                    <a href="{% url 'home' %}" class="btn ghost">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </main>
+
 </body>
 </html>
