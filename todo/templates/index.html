@@ -6,6 +6,7 @@
   <title>📝 My Todo App</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="{% static 'styles.css' %}">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js" integrity="sha512-..." crossorigin="anonymous"></script>
 </head>
 <body>
   <!-- Topbar -->
@@ -19,7 +20,7 @@
   <!-- Hero Section -->
   <section class="hero container">
     <h2 class="hero-title">Organize Your Day</h2>
-    <p class="hero-desc">Manage tasks, categories, and deadlines in a clean and modern dashboard.</p>
+    <p class="hero-desc">Manage tasks, categories, deadlines, and priorities with style.</p>
   </section>
 
   <main class="container main">
@@ -36,21 +37,10 @@
       </form>
 
       <div class="flex-between">
-        <!-- Filter Form -->
-        <form method="GET" class="filter-form">
-          <input name="q" placeholder="Search tasks..." value="{{ q }}">
-          <select name="category">
-            <option value="">All categories</option>
-            {% for cat in categories %}
-              <option value="{{ cat.id }}" {% if current_category|add:'' == cat.id|stringformat:"s" %}selected{% endif %}>
-                {{ cat.name }}
-              </option>
-            {% endfor %}
-          </select>
-          <button class="btn ghost small">Filter</button>
-        </form>
+        <!-- Filter -->
+        <input type="text" id="live-search" placeholder="Search tasks..." class="wide">
 
-        <!-- Add Category Form -->
+        <!-- Add Category -->
         <form method="POST" action="{% url 'add_category' %}" class="add-category-form">
           {% csrf_token %}
           <input name="name" placeholder="New category...">
@@ -62,81 +52,93 @@
     <!-- Tasks List -->
     <section class="card tasks elevated">
       <h3 class="section-title">Your Tasks</h3>
-      <ul class="task-list">
+      <ul class="task-list" id="tasks">
         {% for task in tasks %}
-          <li class="modern-task {% if task.completed %}done{% endif %}">
-            <div class="left">
-              <form method="POST" action="{% url 'toggle' task.id %}">
-                {% csrf_token %}
-                <button class="checkbox">{% if task.completed %}✔{% else %}○{% endif %}</button>
-              </form>
-              <div class="task-text">
-                <div class="title">{{ task.title }}</div>
-                {% if task.description %}
-                  <div class="description">{{ task.description|linebreaksbr }}</div>
-                {% endif %}
-                <div class="small">
-                  {% if task.category %}<span class="chip">{{ task.category.name }}</span>{% endif %}
-                  {% if task.due_date %}<span class="due">🕒 {{ task.due_date|date:"M j, Y H:i" }}</span>{% endif %}
-                </div>
+        <li class="modern-task {% if task.completed %}done{% endif %}" data-title="{{ task.title|lower }}">
+          <div class="left">
+            <!-- Complete Toggle -->
+            <form method="POST" action="{% url 'toggle' task.id %}">
+              {% csrf_token %}
+              <button class="checkbox">{% if task.completed %}✔{% else %}○{% endif %}</button>
+            </form>
+
+            <div class="task-text">
+              <div class="title">{{ task.title }}</div>
+              {% if task.description %}
+                <div class="description">{{ task.description|linebreaksbr }}</div>
+              {% endif %}
+              <div class="small">
+                {% if task.category %}<span class="chip">{{ task.category.name }}</span>{% endif %}
+                {% if task.due_date %}<span class="due">🕒 {{ task.due_date|date:"M j, Y H:i" }}</span>{% endif %}
               </div>
             </div>
-            <div class="task-actions">
-              <a href="{% url 'edit' task.id %}" class="btn ghost small">✏ Edit</a>
-              <form method="POST" action="{% url 'delete' task.id %}">
-                {% csrf_token %}
-                <button class="btn danger small">🗑 Delete</button>
-              </form>
-            </div>
-          </li>
+          </div>
+
+          <div class="task-actions">
+            <a href="{% url 'edit' task.id %}" class="btn ghost small">✏ Edit</a>
+            <form method="POST" action="{% url 'delete' task.id %}">
+              {% csrf_token %}
+              <button class="btn danger small">🗑 Delete</button>
+            </form>
+          </div>
+        </li>
         {% empty %}
-          <p class="empty">✨ No tasks yet — Add one above!</p>
+        <p class="empty">✨ No tasks yet — Add one above!</p>
         {% endfor %}
       </ul>
 
       <!-- Pagination -->
       {% if is_paginated %}
-        <div class="pagination">
-          {% if page_obj.has_previous %}
-            <a href="?page={{ page_obj.previous_page_number }}{% if q %}&q={{ q }}{% endif %}" class="btn small ghost">⬅ Prev</a>
+      <div class="pagination">
+        {% if page_obj.has_previous %}
+          <a href="?page={{ page_obj.previous_page_number }}{% if q %}&q={{ q }}{% endif %}" class="btn small ghost">⬅ Prev</a>
+        {% endif %}
+        {% for num in paginator.page_range %}
+          {% if page_obj.number == num %}
+            <span class="btn small accent">{{ num }}</span>
+          {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+            <a href="?page={{ num }}{% if q %}&q={{ q }}{% endif %}" class="btn small ghost">{{ num }}</a>
           {% endif %}
-
-          {% for num in paginator.page_range %}
-            {% if page_obj.number == num %}
-              <span class="btn small accent">{{ num }}</span>
-            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-              <a href="?page={{ num }}{% if q %}&q={{ q }}{% endif %}" class="btn small ghost">{{ num }}</a>
-            {% endif %}
-          {% endfor %}
-
-          {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}{% if q %}&q={{ q }}{% endif %}" class="btn small ghost">Next ➡</a>
-          {% endif %}
-        </div>
+        {% endfor %}
+        {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}{% if q %}&q={{ q }}{% endif %}" class="btn small ghost">Next ➡</a>
+        {% endif %}
+      </div>
       {% endif %}
     </section>
-
   </main>
 
-  <!-- Theme Script -->
+  <!-- Scripts -->
   <script>
+    // Theme Toggle
     const toggle = document.getElementById("theme-toggle");
     const root = document.documentElement;
-
-    function setTheme(mode) {
-      if (mode === "dark") root.classList.add("dark");
-      else root.classList.remove("dark");
-      toggle.textContent = mode === "dark" ? "☀" : "🌙";
+    function setTheme(mode){
+      root.classList.toggle("dark", mode==="dark");
+      toggle.textContent = mode==="dark"?"☀":"🌙";
       localStorage.setItem("theme", mode);
     }
+    toggle.addEventListener("click", ()=>{
+      const current = localStorage.getItem("theme") || (root.classList.contains("dark")?"dark":"light");
+      setTheme(current==="dark"?"light":"dark");
+    });
+    setTheme(localStorage.getItem("theme")||"light");
 
-    toggle.addEventListener("click", () => {
-      const current = localStorage.getItem("theme") || 
-        (root.classList.contains("dark") ? "dark" : "light");
-      setTheme(current === "dark" ? "light" : "dark");
+    // Live Search
+    const search = document.getElementById("live-search");
+    search.addEventListener("input", e=>{
+      const query = e.target.value.toLowerCase();
+      document.querySelectorAll("#tasks li").forEach(task=>{
+        task.style.display = task.dataset.title.includes(query)?"flex":"none";
+      });
     });
 
-    setTheme(localStorage.getItem("theme") || "light");
+    // Drag & Drop
+    new Sortable(document.getElementById("tasks"), {
+      animation: 150,
+      ghostClass: 'dragging',
+      handle: '.title',
+    });
   </script>
 </body>
 </html>
