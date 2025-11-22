@@ -6,28 +6,34 @@
   <title>📝 My Todo App</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="{% static 'styles.css' %}">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js" integrity="sha512-..." crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
 </head>
 <body>
-  <!-- Topbar -->
+
+  <!-- Modern Navbar -->
   <header class="topbar">
     <div class="container topbar-content">
-      <h1 class="logo">📝 My Todo App</h1>
-      <button id="theme-toggle" class="btn small ghost">🌙</button>
+      <h1 class="logo">📝 Todo SaaS</h1>
+      <nav class="nav-right">
+        <a href="{% url 'login' %}" class="btn small ghost">Login</a>
+        <a href="{% url 'register' %}" class="btn small">Register</a>
+        <button id="theme-toggle" class="btn small ghost">🌙</button>
+      </nav>
     </div>
   </header>
 
   <!-- Hero Section -->
-  <section class="hero container">
+  <section class="hero container compact">
     <h2 class="hero-title">Organize Your Day</h2>
-    <p class="hero-desc">Manage tasks, categories, deadlines, and priorities with style.</p>
+    <p class="hero-desc">Manage tasks, categories, and deadlines efficiently with a modern interface.</p>
   </section>
 
-  <main class="container main">
+  <main class="container main compact">
+
     <!-- Add & Filter Section -->
-    <section class="card add-section elevated">
+    <section class="card add-section elevated compact">
       <h3 class="section-title">Add Task</h3>
-      <form method="POST" class="add-form">
+      <form method="POST" class="add-form compact">
         {% csrf_token %}
         {{ form.title }}
         {{ form.description }}
@@ -36,12 +42,12 @@
         <button type="submit" class="btn wide">➕ Add Task</button>
       </form>
 
-      <div class="flex-between">
-        <!-- Filter -->
+      <div class="flex-between compact">
+        <!-- Live Search -->
         <input type="text" id="live-search" placeholder="Search tasks..." class="wide">
 
         <!-- Add Category -->
-        <form method="POST" action="{% url 'add_category' %}" class="add-category-form">
+        <form method="POST" action="{% url 'add_category' %}" class="add-category-form compact">
           {% csrf_token %}
           <input name="name" placeholder="New category...">
           <button class="btn small">Add</button>
@@ -50,18 +56,16 @@
     </section>
 
     <!-- Tasks List -->
-    <section class="card tasks elevated">
+    <section class="card tasks elevated compact">
       <h3 class="section-title">Your Tasks</h3>
       <ul class="task-list" id="tasks">
         {% for task in tasks %}
         <li class="modern-task {% if task.completed %}done{% endif %}" data-title="{{ task.title|lower }}">
           <div class="left">
-            <!-- Complete Toggle -->
             <form method="POST" action="{% url 'toggle' task.id %}">
               {% csrf_token %}
               <button class="checkbox">{% if task.completed %}✔{% else %}○{% endif %}</button>
             </form>
-
             <div class="task-text">
               <div class="title">{{ task.title }}</div>
               {% if task.description %}
@@ -89,7 +93,7 @@
 
       <!-- Pagination -->
       {% if is_paginated %}
-      <div class="pagination">
+      <div class="pagination compact">
         {% if page_obj.has_previous %}
           <a href="?page={{ page_obj.previous_page_number }}{% if q %}&q={{ q }}{% endif %}" class="btn small ghost">⬅ Prev</a>
         {% endif %}
@@ -106,6 +110,7 @@
       </div>
       {% endif %}
     </section>
+
   </main>
 
   <!-- Scripts -->
@@ -140,5 +145,6 @@
       handle: '.title',
     });
   </script>
+
 </body>
 </html>
