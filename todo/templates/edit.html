@@ -1,48 +1,23 @@
 {% load static %}
 <!doctype html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <title>Edit Task</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <link rel="stylesheet" href="{% static 'styles.css' %}">
-
-  <!-- Theme Sync Script -->
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const toggle = document.getElementById("theme-toggle");
-      const saved = localStorage.getItem("theme") || "light";
-
-      document.documentElement.setAttribute("data-theme", saved);
-      if (toggle) toggle.innerText = saved === "dark" ? "☀" : "🌙";
-
-      if (toggle) {
-        toggle.addEventListener("click", () => {
-          const newTheme =
-            document.documentElement.getAttribute("data-theme") === "dark"
-              ? "light"
-              : "dark";
-
-          document.documentElement.setAttribute("data-theme", newTheme);
-          localStorage.setItem("theme", newTheme);
-          toggle.innerText = newTheme === "dark" ? "☀" : "🌙";
-        });
-      }
-    });
-  </script>
 </head>
 
 <body>
-
-  <!-- NAVBAR (same as index) -->
-  <header class="navbar">
-    <div class="container nav-content">
+  <!-- Topbar -->
+  <header class="topbar">
+    <div class="container topbar-content">
       <h1 class="logo">✏️ Edit Task</h1>
       <button id="theme-toggle" class="btn small ghost">🌙</button>
     </div>
   </header>
 
-  <main class="container fade-in">
+  <main class="container main fade-in">
 
     <section class="card modern-card">
       <h2>Edit Task</h2>
@@ -61,6 +36,29 @@
     </section>
 
   </main>
+
+  <!-- Theme Script: EXACT SAME AS index.html -->
+  <script>
+    const toggle = document.getElementById("theme-toggle");
+    const root = document.documentElement;
+
+    function setTheme(mode) {
+      if (mode === "dark") root.classList.add("dark");
+      else root.classList.remove("dark");
+
+      toggle.textContent = mode === "dark" ? "☀" : "🌙";
+      localStorage.setItem("theme", mode);
+    }
+
+    toggle.addEventListener("click", () => {
+      const current = localStorage.getItem("theme") || 
+        (root.classList.contains("dark") ? "dark" : "light");
+      setTheme(current === "dark" ? "light" : "dark");
+    });
+
+    // Load saved theme
+    setTheme(localStorage.getItem("theme") || "light");
+  </script>
 
 </body>
 </html>
