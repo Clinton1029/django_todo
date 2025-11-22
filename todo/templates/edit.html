@@ -2,77 +2,65 @@
 <!doctype html>
 <html lang="en" data-theme="light">
 <head>
-    <meta charset="utf-8">
-    <title>Edit Task</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <link rel="stylesheet" href="{% static 'styles.css' %}">
+  <meta charset="utf-8">
+  <title>Edit Task</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="{% static 'styles.css' %}">
 
-    <!-- THEME SCRIPT -->
-    <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const themeToggle = document.getElementById("themeToggle");
-        const savedTheme = localStorage.getItem("theme") || "light";
+  <!-- Theme Sync Script -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const toggle = document.getElementById("theme-toggle");
+      const saved = localStorage.getItem("theme") || "light";
 
-        document.documentElement.setAttribute("data-theme", savedTheme);
+      document.documentElement.setAttribute("data-theme", saved);
+      if (toggle) toggle.innerText = saved === "dark" ? "☀" : "🌙";
 
-        if (savedTheme === "dark") themeToggle.checked = true;
+      if (toggle) {
+        toggle.addEventListener("click", () => {
+          const newTheme =
+            document.documentElement.getAttribute("data-theme") === "dark"
+              ? "light"
+              : "dark";
 
-        themeToggle.addEventListener("change", function () {
-            if (this.checked) {
-                document.documentElement.setAttribute("data-theme", "dark");
-                localStorage.setItem("theme", "dark");
-            } else {
-                document.documentElement.setAttribute("data-theme", "light");
-                localStorage.setItem("theme", "light");
-            }
+          document.documentElement.setAttribute("data-theme", newTheme);
+          localStorage.setItem("theme", newTheme);
+          toggle.innerText = newTheme === "dark" ? "☀" : "🌙";
         });
+      }
     });
-    </script>
+  </script>
 </head>
 
 <body>
 
-    <!-- NAVBAR -->
-    <header class="navbar">
-        <h1 class="logo">Django Todo</h1>
+  <!-- NAVBAR (same as index) -->
+  <header class="navbar">
+    <div class="container nav-content">
+      <h1 class="logo">✏️ Edit Task</h1>
+      <button id="theme-toggle" class="btn small ghost">🌙</button>
+    </div>
+  </header>
 
-        <!-- Theme toggle -->
-        <label class="switch">
-            <input type="checkbox" id="themeToggle">
-            <span class="slider round"></span>
-        </label>
-    </header>
+  <main class="container fade-in">
 
-    <main class="container fade-in">
-        <div class="card modern-card">
-            <h2>Edit Task</h2>
+    <section class="card modern-card">
+      <h2>Edit Task</h2>
 
-            <form method="POST" class="form">
-                {% csrf_token %}
+      <form method="POST" class="form">
+        {% csrf_token %}
 
-                <div class="form-group">
-                    {{ form.title }}
-                </div>
+        {{ form.title }}
+        {{ form.description }}
+        {{ form.category }}
+        {{ form.due_date }}
 
-                <div class="form-group">
-                    {{ form.description }}
-                </div>
+        <button class="btn full">Save</button>
+        <a href="{% url 'home' %}" class="btn ghost full">Cancel</a>
+      </form>
+    </section>
 
-                <div class="form-group">
-                    {{ form.category }}
-                </div>
-
-                <div class="form-group">
-                    {{ form.due_date }}
-                </div>
-
-                <div class="btn-row">
-                    <button class="btn primary">Save</button>
-                    <a href="{% url 'home' %}" class="btn ghost">Cancel</a>
-                </div>
-            </form>
-        </div>
-    </main>
+  </main>
 
 </body>
 </html>
