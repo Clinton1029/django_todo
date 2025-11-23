@@ -3,45 +3,50 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Create Account</title>
+    <title>Sign Up</title>
     <link rel="stylesheet" href="{% static 'styles.css' %}">
 </head>
 <body>
 
-<div class="auth-wrapper">
-  <div class="auth-card">
+<div class="auth-container">
+    <div class="auth-box">
 
-    <h2 class="auth-title">Create Account</h2>
-    <p class="auth-sub">Join us and start organizing</p>
+        <h2 class="auth-title">Create Account</h2>
+        <p class="auth-sub">Join and start organizing your tasks</p>
 
-    <form method="POST">
-        {% csrf_token %}
-        {{ form.non_field_errors }}
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
 
-        <div>
-            <label>Username</label>
-            {{ form.username }}
-        </div>
+            <div class="auth-group">
+                <label>Username</label>
+                {{ form.username }}
+            </div>
 
-        <div>
-            <label>Password</label>
-            {{ form.password1 }}
-        </div>
+            <div class="auth-group">
+                <label>Email</label>
+                {{ form.email }}
+            </div>
 
-        <div>
-            <label>Confirm Password</label>
-            {{ form.password2 }}
-        </div>
+            <div class="auth-group">
+                <label>Password</label>
+                {{ form.password1 }}
+            </div>
 
-        <button type="submit" class="btn wide">Register</button>
-    </form>
+            <div class="auth-group">
+                <label>Confirm Password</label>
+                {{ form.password2 }}
+            </div>
 
-    <div class="auth-link">
-      Already have an account?
-      <a href="{% url 'login' %}">Login</a>
+            <button class="auth-btn" type="submit">Sign Up</button>
+        </form>
+
+        <p class="auth-switch">
+            Already have an account?
+            <a href="{% url 'login' %}">Login</a>
+        </p>
+
     </div>
-
-  </div>
 </div>
 
 </body>
