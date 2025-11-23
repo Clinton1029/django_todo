@@ -16,16 +16,24 @@
 
         <form method="POST">
             {% csrf_token %}
-            {{ form.non_field_errors }}
+
+            <!-- Show non-field errors (like invalid credentials) -->
+            {% if form.non_field_errors %}
+                <div class="error">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
 
             <div class="auth-group">
-                <label>Username</label>
+                <label for="{{ form.username.id_for_label }}">Username</label>
                 {{ form.username }}
+                {{ form.username.errors }}
             </div>
 
             <div class="auth-group">
-                <label>Password</label>
+                <label for="{{ form.password.id_for_label }}">Password</label>
                 {{ form.password }}
+                {{ form.password.errors }}
             </div>
 
             <button class="auth-btn" type="submit">Login</button>

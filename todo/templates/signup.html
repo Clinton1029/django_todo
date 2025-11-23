@@ -16,26 +16,36 @@
 
         <form method="POST">
             {% csrf_token %}
-            {{ form.non_field_errors }}
+
+            <!-- Non-field errors -->
+            {% if form.non_field_errors %}
+                <div class="error">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
 
             <div class="auth-group">
-                <label>Username</label>
+                <label for="{{ form.username.id_for_label }}">Username</label>
                 {{ form.username }}
+                {{ form.username.errors }}
             </div>
 
             <div class="auth-group">
-                <label>Email</label>
+                <label for="{{ form.email.id_for_label }}">Email</label>
                 {{ form.email }}
+                {{ form.email.errors }}
             </div>
 
             <div class="auth-group">
-                <label>Password</label>
+                <label for="{{ form.password1.id_for_label }}">Password</label>
                 {{ form.password1 }}
+                {{ form.password1.errors }}
             </div>
 
             <div class="auth-group">
-                <label>Confirm Password</label>
+                <label for="{{ form.password2.id_for_label }}">Confirm Password</label>
                 {{ form.password2 }}
+                {{ form.password2.errors }}
             </div>
 
             <button class="auth-btn" type="submit">Sign Up</button>
