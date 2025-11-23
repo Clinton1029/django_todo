@@ -8,33 +8,33 @@
 </head>
 <body>
 
-<div class="auth-wrapper">
-    <div class="auth-card">
-        
+<div class="auth-container">
+    <div class="auth-box">
+
         <h2 class="auth-title">Welcome Back</h2>
-        <p class="auth-sub">Login to continue</p>
+        <p class="auth-sub">Log in to your account</p>
 
         <form method="POST">
             {% csrf_token %}
             {{ form.non_field_errors }}
 
-            <div class="auth-input-group">
+            <div class="auth-group">
                 <label>Username</label>
                 {{ form.username }}
             </div>
 
-            <div class="auth-input-group">
+            <div class="auth-group">
                 <label>Password</label>
                 {{ form.password }}
             </div>
 
-            <button type="submit" class="auth-btn">Login</button>
+            <button class="auth-btn" type="submit">Login</button>
         </form>
 
-        <div class="auth-link">
-            Don’t have an account?
-            <a href="{% url 'signup' %}">Register</a>
-        </div>
+        <p class="auth-switch">
+            Don't have an account?
+            <a href="{% url 'signup' %}">Sign up</a>
+        </p>
 
     </div>
 </div>
