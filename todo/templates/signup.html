@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Sign Up</title>
+    <title>Create Account</title>
     <link rel="stylesheet" href="{% static 'styles.css' %}">
 </head>
 <body>
@@ -17,35 +17,47 @@
         <form method="POST">
             {% csrf_token %}
 
-            <!-- Non-field errors -->
+            <!-- Global form errors -->
             {% if form.non_field_errors %}
-                <div class="error">
+                <div class="auth-error">
                     {{ form.non_field_errors }}
                 </div>
             {% endif %}
 
+            <!-- Username -->
             <div class="auth-group">
                 <label for="{{ form.username.id_for_label }}">Username</label>
                 {{ form.username }}
-                {{ form.username.errors }}
+                {% if form.username.errors %}
+                    <div class="field-error">{{ form.username.errors }}</div>
+                {% endif %}
             </div>
 
+            <!-- Email -->
             <div class="auth-group">
                 <label for="{{ form.email.id_for_label }}">Email</label>
                 {{ form.email }}
-                {{ form.email.errors }}
+                {% if form.email.errors %}
+                    <div class="field-error">{{ form.email.errors }}</div>
+                {% endif %}
             </div>
 
+            <!-- Password -->
             <div class="auth-group">
                 <label for="{{ form.password1.id_for_label }}">Password</label>
                 {{ form.password1 }}
-                {{ form.password1.errors }}
+                {% if form.password1.errors %}
+                    <div class="field-error">{{ form.password1.errors }}</div>
+                {% endif %}
             </div>
 
+            <!-- Confirm Password -->
             <div class="auth-group">
                 <label for="{{ form.password2.id_for_label }}">Confirm Password</label>
                 {{ form.password2 }}
-                {{ form.password2.errors }}
+                {% if form.password2.errors %}
+                    <div class="field-error">{{ form.password2.errors }}</div>
+                {% endif %}
             </div>
 
             <button class="auth-btn" type="submit">Sign Up</button>
