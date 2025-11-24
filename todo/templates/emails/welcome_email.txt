@@ -1,0 +1,6 @@
+Welcome, {{ username }}!
+
+Thanks for creating an account on My Todo App.
+Log in here: {{ login_url }}
+
+© {{ year }} My Todo App
