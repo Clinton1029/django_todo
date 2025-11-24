@@ -8,14 +8,18 @@ from .models import Task, Category
 from .forms import TaskForm, CategoryForm
 from django.utils import timezone
 
+# NEW IMPORTS FOR EMAIL
+from .emails import send_welcome_email
+from django.contrib.auth import login as auth_login
+
+
 # Home page (requires login)
 @login_required(login_url='login')
 def index(request):
-    # Optional filters
     q = request.GET.get('q', '')
     category = request.GET.get('category', '')
 
-    tasks = Task.objects.filter(user=request.user)  # Only show tasks for the logged-in user
+    tasks = Task.objects.filter(user=request.user)
 
     if q:
         tasks = tasks.filter(title__icontains=q)
@@ -29,7 +33,7 @@ def index(request):
         form = TaskForm(request.POST)
         if form.is_valid():
             task = form.save(commit=False)
-            task.user = request.user  # associate task with logged-in user
+            task.user = request.user
             task.save()
             return redirect('home')
     else:
@@ -91,11 +95,18 @@ def signup_view(request):
         form = UserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user)  # Log the user in immediately
-            messages.success(request, "Account created successfully!")
+
+            # LOGIN USER
+            auth_login(request, user)
+
+            # SEND WELCOME EMAIL
+            send_welcome_email(user)
+
+            messages.success(request, "Account created successfully! Check your email.")
             return redirect('home')
     else:
         form = UserCreationForm()
+
     return render(request, 'signup.html', {'form': form})
 
 
